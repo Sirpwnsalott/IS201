@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Number Guessing Game</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .app-container {
+      background: white;
+      padding: 30px;
+      width: 360px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    select,
+    input {
+      padding: 8px;
+      width: 85%;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 24px;
+    }
+
+    .history {
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    .history ul {
+      padding-left: 20px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    a {
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <h1>Guess the Number</h1>
+
+    <p>Select a difficulty level:</p>
+    <select id="difficulty" onchange="resetGame()">
+      <option value="50">Easy (1–50)</option>
+      <option value="100" selected>Medium (1–100)</option>
+      <option value="200">Hard (1–200)</option>
+    </select>
+
+    <p id="range-text">I am thinking of a number between 1 and 100.</p>
+
+    <input
+      type="number"
+      id="guess"
+      placeholder="Enter your guess"
+      min="1">
+
+    <button onclick="checkGuess()">Submit Guess</button>
+    <button onclick="resetGame()">Reset Game</button>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="history">
+      <strong>Guess History:</strong>
+      <ul id="history-list"></ul>
+    </div>
+
+    <a href="scratch.html">← Back to Scratch Page</a>
+  </div>
+
+  <script>
+    let maxNumber = 100;
+    let secretNumber = generateNumber();
+    let attempts = 0;
+
+    function generateNumber() {
+      return Math.floor(Math.random() * maxNumber) + 1;
+    }
+
+    function checkGuess() {
+      const guessInput = document.getElementById("guess");
+      const feedback = document.getElementById("feedback");
+      const historyList = document.getElementById("history-list");
+      const userGuess = Number(guessInput.value);
+
+      if (!userGuess || userGuess < 1 || userGuess > maxNumber) {
+        feedback.textContent = `Please enter a number between 1 and ${maxNumber}.`;
+        feedback.style.color = "red";
+        return;
+      }
+
+      attempts++;
+
+      // Add guess to history
+      const listItem = document.createElement("li");
+      listItem.textContent = userGuess;
+      historyList.appendChild(listItem);
+
+      if (userGuess === secretNumber) {
+        feedback.textContent = `Correct! You guessed the number in ${attempts} tries.`;
+        feedback.style.color = "green";
+      } else if (userGuess < secretNumber) {
+        feedback.textContent = "Too low! Try again.";
+        feedback.style.color = "orange";
+      } else {
+        feedback.textContent = "Too high! Try again.";
+        feedback.style.color = "blue";
+      }
+
+      guessInput.value = "";
+    }
+
+    function resetGame() {
+      const difficulty = document.getElementById("difficulty");
+      const feedback = document.getElementById("feedback");
+      const historyList = document.getElementById("history-list");
+      const rangeText = document.getElementById("range-text");
+
+      maxNumber = Number(difficulty.value);
+      secretNumber = generateNumber();
+      attempts = 0;
+
+      feedback.textContent = "";
+      historyList.innerHTML = "";
+      rangeText.textContent = `I am thinking of a number between 1 and ${maxNumber}.`;
+    }
+  </script>
+
+</body>
+</html>
